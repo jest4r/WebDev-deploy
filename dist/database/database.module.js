@@ -30,11 +30,7 @@ exports.DatabaseModule = DatabaseModule = __decorate([
                     const dbType = configService.get('DB_TYPE', 'mysql');
                     const baseConfig = {
                         type: dbType,
-                        host: configService.get('DB_HOST', 'localhost'),
-                        port: configService.get('DB_PORT', dbType === 'mysql' ? 3306 : 5432),
-                        username: configService.get('DB_USERNAME', 'root'),
-                        password: configService.get('DB_PASSWORD', ''),
-                        database: configService.get('DB_NAME', 'railway'),
+                        url: configService.get('DATABASE_URL', ''),
                         entities: [__dirname + '/../**/*.entity{.ts,.js}'],
                         synchronize: configService.get('DB_SYNCHRONIZE', true),
                         logging: configService.get('DB_LOGGING', false),
