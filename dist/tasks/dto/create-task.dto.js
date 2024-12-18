@@ -16,53 +16,82 @@ class CreateTaskDto {
 }
 exports.CreateTaskDto = CreateTaskDto;
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 1, description: 'The ID of the Task', required: false }),
-    (0, class_validator_1.IsInt)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", Number)
-], CreateTaskDto.prototype, "id", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: 1, description: 'The address ID of the Task' }),
-    (0, class_validator_1.IsInt)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", Number)
-], CreateTaskDto.prototype, "address_id", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: 'Task Title', description: 'The title of the Task' }),
+    (0, swagger_1.ApiProperty)({ example: 'Task title', description: 'The title of the task' }),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.MinLength)(3),
-    (0, class_validator_1.MaxLength)(100),
+    (0, class_validator_1.MaxLength)(255),
     __metadata("design:type", String)
 ], CreateTaskDto.prototype, "title", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'Task Description', description: 'The description of the Task' }),
+    (0, swagger_1.ApiProperty)({
+        example: 'Task description',
+        description: 'The description of the task',
+    }),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.MaxLength)(500),
     __metadata("design:type", String)
 ], CreateTaskDto.prototype, "description", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 2, description: 'The service ID of the Task' }),
-    (0, class_validator_1.IsInt)(),
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, swagger_1.ApiProperty)({ example: 'skill ID', description: 'The skill of the task' }),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsPositive)(),
     __metadata("design:type", Number)
-], CreateTaskDto.prototype, "service_id", void 0);
+], CreateTaskDto.prototype, "skill_id", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: '10000', description: 'The amount for the Task' }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, swagger_1.ApiProperty)({
+        example: 'district ID',
+        description: 'The district of the task',
+    }),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsPositive)(),
     __metadata("design:type", String)
-], CreateTaskDto.prototype, "amount", void 0);
+], CreateTaskDto.prototype, "district", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 1, description: 'The user ID of the Task' }),
-    (0, class_validator_1.IsInt)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", Number)
-], CreateTaskDto.prototype, "user_id", void 0);
+    (0, swagger_1.ApiProperty)({
+        example: 'street name',
+        description: 'The street of the task',
+    }),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateTaskDto.prototype, "ward", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 1, description: 'The tasker ID of the Task' }),
+    (0, swagger_1.ApiProperty)({
+        example: '14 Xuaan Thuy',
+        description: 'The address of the task',
+    }),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateTaskDto.prototype, "detail_address", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        example: '100',
+        description: 'The duration of the task',
+    }),
+    (0, class_validator_1.IsPositive)(),
     (0, class_validator_1.IsInt)(),
-    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
-], CreateTaskDto.prototype, "tasker_id", void 0);
+], CreateTaskDto.prototype, "estimated_duration", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        example: '1000000',
+        description: 'The fee per hour of the task',
+    }),
+    (0, class_validator_1.IsNumberString)(),
+    __metadata("design:type", String)
+], CreateTaskDto.prototype, "fee_per_hour", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        example: '1999-12-31',
+        description: 'The start date of the task',
+    }),
+    (0, class_validator_1.IsDateString)(),
+    __metadata("design:type", Date)
+], CreateTaskDto.prototype, "start_date", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        example: '1999-12-31',
+        description: 'The end date of the task',
+    }),
+    (0, class_validator_1.IsDateString)(),
+    __metadata("design:type", Date)
+], CreateTaskDto.prototype, "end_date", void 0);
 //# sourceMappingURL=create-task.dto.js.map

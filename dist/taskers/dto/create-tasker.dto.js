@@ -16,45 +16,25 @@ class CreateTaskerDto {
 }
 exports.CreateTaskerDto = CreateTaskerDto;
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 1, description: 'The id of the tasker' }),
-    (0, class_validator_1.IsNumber)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", Number)
-], CreateTaskerDto.prototype, "id", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: 1, description: 'The user id of the tasker' }),
-    (0, class_validator_1.IsNumber)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", Number)
-], CreateTaskerDto.prototype, "user_id", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: 1, description: 'The skill id of the tasker' }),
-    (0, class_validator_1.IsNumber)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", Number)
-], CreateTaskerDto.prototype, "skill_id", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: 'Ha Noi', description: 'The work area of the tasker' }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
+    (0, swagger_1.ApiProperty)({ description: 'Work area', type: [Number], required: false }),
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
 ], CreateTaskerDto.prototype, "work_area", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'Full-time except weekend', description: 'The work schedule of the tasker' }),
+    (0, swagger_1.ApiProperty)({ description: 'Experience', required: false }),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], CreateTaskerDto.prototype, "work_schedule", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: 1000000, description: 'The expected rate of the tasker' }),
-    (0, class_validator_1.IsNumber)(),
-    __metadata("design:type", Number)
-], CreateTaskerDto.prototype, "expected_rate", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: 'I am a good shipper and cleaner', description: 'The description of the tasker' }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MinLength)(10),
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateTaskerDto.prototype, "experience", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        description: 'Skills IDs',
+        type: [Number],
+        required: false,
+    }),
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], CreateTaskerDto.prototype, "skillIds", void 0);
 //# sourceMappingURL=create-tasker.dto.js.map

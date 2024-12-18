@@ -11,6 +11,8 @@ export declare class JwtStrategy extends JwtStrategy_base {
     validate(payload: TokenPayload): Promise<{
         user_id: number;
         role: Role;
+        tasker_id: number;
+        profile_id: number;
     }>;
 }
 export {};

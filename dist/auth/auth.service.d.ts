@@ -11,7 +11,7 @@ export declare class AuthService {
     constructor(usersService: UsersService, jwtService: JwtService, configService: ConfigService);
     register(registerDto: CreateUserDto): Promise<import("lodash").Omit<User, "password">>;
     login(loginDto: LoginDto): Promise<{
-        user: User;
+        user: Omit<User, 'password'>;
         token: {
             access_token: string;
             refresh_token: string;

@@ -12,15 +12,17 @@ const taskers_service_1 = require("./taskers.service");
 const taskers_controller_1 = require("./taskers.controller");
 const typeorm_1 = require("@nestjs/typeorm");
 const tasker_entity_1 = require("./entities/tasker.entity");
+const users_module_1 = require("../users/users.module");
+const skills_module_1 = require("../skills/skills.module");
 let TaskersModule = class TaskersModule {
 };
 exports.TaskersModule = TaskersModule;
 exports.TaskersModule = TaskersModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([tasker_entity_1.Tasker])],
+        imports: [typeorm_1.TypeOrmModule.forFeature([tasker_entity_1.Tasker]), users_module_1.UsersModule, skills_module_1.SkillsModule],
         controllers: [taskers_controller_1.TaskersController],
         providers: [taskers_service_1.TaskersService],
-        exports: [taskers_service_1.TaskersService]
+        exports: [taskers_service_1.TaskersService],
     })
 ], TaskersModule);
 //# sourceMappingURL=taskers.module.js.map

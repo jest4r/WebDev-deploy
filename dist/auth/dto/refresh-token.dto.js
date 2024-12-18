@@ -22,5 +22,5 @@ __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
-], RefreshTokenDto.prototype, "refreshToken", void 0);
+], RefreshTokenDto.prototype, "refresh_token", void 0);
 //# sourceMappingURL=refresh-token.dto.js.map

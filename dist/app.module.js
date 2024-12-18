@@ -13,16 +13,13 @@ const app_service_1 = require("./app.service");
 const config_1 = require("@nestjs/config");
 const users_module_1 = require("./users/users.module");
 const database_module_1 = require("./database/database.module");
-const reviews_module_1 = require("./reviews/reviews.module");
 const taskers_module_1 = require("./taskers/taskers.module");
 const tasks_module_1 = require("./tasks/tasks.module");
 const auth_module_1 = require("./auth/auth.module");
 const core_1 = require("@nestjs/core");
 const jwt_auth_guard_1 = require("./auth/guards/jwt-auth.guard");
-const services_module_1 = require("./services/services.module");
-const payments_module_1 = require("./payments/payments.module");
-const serve_static_1 = require("@nestjs/serve-static");
 const path_1 = require("path");
+const serve_static_1 = require("@nestjs/serve-static");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -39,10 +36,7 @@ exports.AppModule = AppModule = __decorate([
             }),
             database_module_1.DatabaseModule,
             users_module_1.UsersModule,
-            reviews_module_1.ReviewsModule,
             taskers_module_1.TaskersModule,
-            services_module_1.ServicesModule,
-            payments_module_1.PaymentsModule,
             tasks_module_1.TasksModule,
             auth_module_1.AuthModule,
         ],

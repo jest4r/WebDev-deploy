@@ -15,6 +15,7 @@ const jwt_1 = require("@nestjs/jwt");
 const users_service_1 = require("../users/users.service");
 const bcrypt = require("bcrypt");
 const config_1 = require("@nestjs/config");
+const lodash_1 = require("lodash");
 let AuthService = class AuthService {
     constructor(usersService, jwtService, configService) {
         this.usersService = usersService;
@@ -37,7 +38,7 @@ let AuthService = class AuthService {
             }
             const token = await this.getToken({ user_id: user.id });
             return {
-                user,
+                user: (0, lodash_1.omit)(user, 'password'),
                 token,
             };
         }

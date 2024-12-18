@@ -14,121 +14,209 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TasksController = void 0;
 const common_1 = require("@nestjs/common");
-const swagger_1 = require("@nestjs/swagger");
 const tasks_service_1 = require("./tasks.service");
 const create_task_dto_1 = require("./dto/create-task.dto");
-const task_entity_1 = require("./entities/task.entity");
+const swagger_1 = require("@nestjs/swagger");
 const public_decorator_1 = require("../auth/decorator/public.decorator");
+const task_action_service_1 = require("./task-action.service");
+const role_guard_decorator_1 = require("../auth/decorator/role-guard.decorator");
 const Role_enum_1 = require("../enum/Role.enum");
 let TasksController = class TasksController {
-    constructor(tasksService) {
+    constructor(tasksService, taskActionService) {
         this.tasksService = tasksService;
+        this.taskActionService = taskActionService;
     }
-    create(createTaskDto, req) {
-        if (req.user.user_id !== createTaskDto.user_id) {
-            throw new common_1.ForbiddenException('You are not allowed to create task for another user');
-        }
-        return this.tasksService.create(createTaskDto);
+    create(req, createTaskDto) {
+        return this.tasksService.create(req.user.user_id, createTaskDto);
     }
-    findAll() {
-        return this.tasksService.findAll();
+    findAllForAdmin() {
+        return this.tasksService.findAllForAdmin();
     }
     findOne(id) {
+        if (!id || isNaN(Number(id))) {
+            return this.tasksService.findAllForUser();
+        }
         return this.tasksService.findOne(+id);
     }
-    findAllByUserId(user_id) {
-        return this.tasksService.findAllByUserId(+user_id);
+    findUserTasks(req) {
+        return this.tasksService.findUserTasks(req.user.user_id);
     }
-    async remove(id, req) {
-        const task = await this.tasksService.findOne(+id);
-        if (req.user.role !== Role_enum_1.Role.ADMIN && task.user_id !== req.user.user_id) {
-            throw new common_1.ForbiddenException('You are not allowed to delete task for another user');
+    findTaskerTasks(req) {
+        if (!req.user.tasker_id) {
+            throw new common_1.ForbiddenException('You must be a tasker to view tasks');
         }
-        return this.tasksService.remove(+id);
+        return this.tasksService.findTaskerTasks(req.user.tasker_id);
+    }
+    apply(req, id) {
+        if (!req.user.tasker_id) {
+            throw new common_1.ForbiddenException('You must be a tasker to apply for a task');
+        }
+        return this.taskActionService.apply(req.user.tasker_id, req.user.user_id, +id);
+    }
+    choose(req, task_id, tasker_id) {
+        return this.taskActionService.choose(req.user.user_id, +tasker_id, +task_id);
+    }
+    accept(req, id) {
+        if (!req.user.tasker_id) {
+            throw new common_1.ForbiddenException('You must be a tasker to accept a task');
+        }
+        return this.taskActionService.accept(req.user.tasker_id, +id);
+    }
+    complete(req, id) {
+        if (!req.user.tasker_id) {
+            throw new common_1.ForbiddenException('You must be a tasker to complete a task');
+        }
+        return this.taskActionService.complete(req.user.tasker_id, +id);
+    }
+    finish(req, task_id) {
+        return this.taskActionService.finish(req.user.user_id, +task_id);
+    }
+    reject(req, id) {
+        if (!req.user.tasker_id) {
+            throw new common_1.ForbiddenException('You must be a tasker to reject a task');
+        }
+        return this.taskActionService.reject(req.user.tasker_id, +id);
+    }
+    cancel(req, task_id) {
+        return this.taskActionService.cancel(req.user.user_id, +task_id);
+    }
+    remove(id, req) {
+        return this.tasksService.remove(req.user.user_id, +id);
     }
 };
 exports.TasksController = TasksController;
 __decorate([
-    (0, common_1.Post)(),
     (0, swagger_1.ApiBearerAuth)('JWT-auth'),
-    (0, swagger_1.ApiOperation)({ summary: 'Create a new task' }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.CREATED,
-        description: 'The task has been successfully created.',
-        type: task_entity_1.Task,
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.BAD_REQUEST,
-        description: 'Invalid input.',
-    }),
-    __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.Req)()),
+    (0, swagger_1.ApiOperation)({ summary: 'User create a task' }),
+    (0, common_1.Post)(),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_task_dto_1.CreateTaskDto, Object]),
-    __metadata("design:returntype", Promise)
+    __metadata("design:paramtypes", [Object, create_task_dto_1.CreateTaskDto]),
+    __metadata("design:returntype", void 0)
 ], TasksController.prototype, "create", null);
 __decorate([
-    (0, public_decorator_1.Public)(),
-    (0, common_1.Get)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Get all tasks' }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.OK,
-        description: 'Return all tasks.',
-        type: [task_entity_1.Task],
-    }),
+    (0, swagger_1.ApiBearerAuth)('JWT-auth'),
+    (0, swagger_1.ApiOperation)({ summary: 'ADMIN: Get all tasks' }),
+    (0, role_guard_decorator_1.RolesGuard)([Role_enum_1.Role.ADMIN]),
+    (0, common_1.Get)('admin'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], TasksController.prototype, "findAll", null);
+    __metadata("design:returntype", void 0)
+], TasksController.prototype, "findAllForAdmin", null);
 __decorate([
+    (0, swagger_1.ApiQuery)({ name: 'id', required: false }),
+    (0, swagger_1.ApiOperation)({ summary: 'Get a task by id' }),
     (0, public_decorator_1.Public)(),
-    (0, common_1.Get)(':id'),
-    (0, swagger_1.ApiOperation)({ summary: 'Get a task by ID' }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.OK,
-        description: 'Return the task.',
-        type: task_entity_1.Task,
-    }),
-    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.NOT_FOUND, description: 'Task not found.' }),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
+    __metadata("design:returntype", void 0)
 ], TasksController.prototype, "findOne", null);
 __decorate([
-    (0, public_decorator_1.Public)(),
-    (0, common_1.Get)('user/:user_id'),
-    (0, swagger_1.ApiOperation)({ summary: 'Get all tasks by user ID' }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.OK,
-        description: 'Return all tasks.',
-        type: [task_entity_1.Task],
-    }),
-    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.NOT_FOUND, description: 'Task not found.' }),
-    __param(0, (0, common_1.Param)('user_id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], TasksController.prototype, "findAllByUserId", null);
-__decorate([
-    (0, common_1.Delete)(':id'),
-    (0, common_1.HttpCode)(common_1.HttpStatus.NO_CONTENT),
     (0, swagger_1.ApiBearerAuth)('JWT-auth'),
-    (0, swagger_1.ApiOperation)({ summary: 'Delete a task by ID' }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.NO_CONTENT,
-        description: 'The task has been successfully deleted.',
-    }),
-    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.NOT_FOUND, description: 'Task not found.' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all tasks created by user' }),
+    (0, common_1.Get)('user'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], TasksController.prototype, "findUserTasks", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('JWT-auth'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all tasks assigned to tasker' }),
+    (0, common_1.Get)('tasker'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], TasksController.prototype, "findTaskerTasks", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('JWT-auth'),
+    (0, swagger_1.ApiOperation)({ summary: 'Tasker apply for a task' }),
+    (0, common_1.Patch)(':id/apply'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", void 0)
+], TasksController.prototype, "apply", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('JWT-auth'),
+    (0, swagger_1.ApiOperation)({ summary: 'User choose a tasker for a task' }),
+    (0, common_1.Patch)(':task_id/choose/:tasker_id'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('task_id')),
+    __param(2, (0, common_1.Param)('tasker_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String]),
+    __metadata("design:returntype", void 0)
+], TasksController.prototype, "choose", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('JWT-auth'),
+    (0, swagger_1.ApiOperation)({ summary: 'Tasker accept a task' }),
+    (0, common_1.Patch)(':id/accept'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", void 0)
+], TasksController.prototype, "accept", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('JWT-auth'),
+    (0, swagger_1.ApiOperation)({ summary: 'Tasker complete a task' }),
+    (0, common_1.Patch)(':id/complete'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", void 0)
+], TasksController.prototype, "complete", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('JWT-auth'),
+    (0, swagger_1.ApiOperation)({ summary: 'User rate a tasker' }),
+    (0, common_1.Patch)(':id/finish'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", void 0)
+], TasksController.prototype, "finish", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('JWT-auth'),
+    (0, swagger_1.ApiOperation)({ summary: 'Tasker reject a task' }),
+    (0, common_1.Patch)(':id/reject'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", void 0)
+], TasksController.prototype, "reject", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('JWT-auth'),
+    (0, swagger_1.ApiOperation)({ summary: 'User rate a tasker' }),
+    (0, common_1.Patch)(':id/cancel'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", void 0)
+], TasksController.prototype, "cancel", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('JWT-auth'),
+    (0, swagger_1.ApiOperation)({ summary: 'User cancel a task' }),
+    (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
-    __metadata("design:returntype", Promise)
+    __metadata("design:returntype", void 0)
 ], TasksController.prototype, "remove", null);
 exports.TasksController = TasksController = __decorate([
-    (0, swagger_1.ApiTags)('Tasks'),
     (0, common_1.Controller)('tasks'),
-    __metadata("design:paramtypes", [tasks_service_1.TasksService])
+    (0, swagger_1.ApiTags)('Tasks'),
+    __metadata("design:paramtypes", [tasks_service_1.TasksService,
+        task_action_service_1.TaskActionService])
 ], TasksController);
 //# sourceMappingURL=tasks.controller.js.map

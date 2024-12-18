@@ -22,6 +22,7 @@ const Role_enum_1 = require("../enum/Role.enum");
 const role_guard_1 = require("./guards/role.guard");
 const roles_decorator_1 = require("./decorator/roles.decorator");
 const public_decorator_1 = require("./decorator/public.decorator");
+const refresh_token_dto_1 = require("./dto/refresh-token.dto");
 let AuthController = class AuthController {
     constructor(authService) {
         this.authService = authService;
@@ -38,8 +39,8 @@ let AuthController = class AuthController {
     async admin(req) {
         return 'Admin only endpoint';
     }
-    async refresh(refreshToken) {
-        return this.authService.refresh(refreshToken);
+    async refresh(refreshTokenDto) {
+        return this.authService.refresh(refreshTokenDto.refresh_token);
     }
 };
 exports.AuthController = AuthController;
@@ -92,9 +93,11 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Refresh token' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Token refreshed' }),
     (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad request' }),
+    (0, public_decorator_1.Public)(),
+    (0, common_1.Post)('refresh'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [refresh_token_dto_1.RefreshTokenDto]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "refresh", null);
 exports.AuthController = AuthController = __decorate([

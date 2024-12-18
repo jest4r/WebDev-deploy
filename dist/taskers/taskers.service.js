@@ -15,47 +15,90 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TaskersService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
-const typeorm_2 = require("typeorm");
 const tasker_entity_1 = require("./entities/tasker.entity");
+const typeorm_2 = require("typeorm");
+const skills_service_1 = require("../skills/skills.service");
+const users_service_1 = require("../users/users.service");
 let TaskersService = class TaskersService {
-    constructor(taskerRepository) {
+    constructor(taskerRepository, skillsService, usersService) {
         this.taskerRepository = taskerRepository;
+        this.skillsService = skillsService;
+        this.usersService = usersService;
     }
-    async create(createTaskerDto) {
+    convertArrayToString(numbers) {
+        return numbers.join(', ');
+    }
+    async create(user_id, createTaskerDto) {
         try {
-            const tasker = this.taskerRepository.create(createTaskerDto);
-            return await this.taskerRepository.save(tasker);
+            const { skillIds, work_area, experience, ...rest } = createTaskerDto;
+            const work_area_code = this.convertArrayToString(work_area);
+            const skills = await this.skillsService.findByIds(skillIds);
+            const user = await this.usersService.findById(user_id);
+            if (user.tasker) {
+                throw new common_1.ConflictException('User is already a tasker');
+            }
+            const tasker = this.taskerRepository.create({
+                ...createTaskerDto,
+                work_area: work_area_code,
+                user,
+                skills,
+            });
+            return this.taskerRepository.save(tasker);
         }
         catch (error) {
             throw error;
         }
     }
-    async findAll() {
-        return await this.taskerRepository.find();
+    findAll() {
+        return this.taskerRepository.find({
+            relations: ['skills'],
+        });
     }
-    async findOne(id) {
-        const tasker = await this.taskerRepository.findOne({ where: { id } });
-        if (!tasker) {
-            throw new common_1.NotFoundException(`Tasker with ID ${id} not found`);
+    findOne(id) {
+        try {
+            const tasker = this.taskerRepository.findOne({
+                where: { id },
+                relations: ['skills'],
+            });
+            if (!tasker) {
+                throw new common_1.NotFoundException('Tasker not found');
+            }
+            return tasker;
         }
-        return tasker;
+        catch (error) {
+            throw error;
+        }
     }
     async update(id, updateTaskerDto) {
-        const tasker = await this.findOne(id);
-        const updatedTasker = Object.assign(tasker, updateTaskerDto);
-        return await this.taskerRepository.save(updatedTasker);
-    }
-    async remove(id) {
-        const result = await this.taskerRepository.delete(id);
-        if (result.affected === 0) {
-            throw new common_1.NotFoundException(`Tasker with ID ${id} not found`);
+        const { skillIds, work_area, ...rest } = updateTaskerDto;
+        const work_area_code = this.convertArrayToString(work_area);
+        const tasker = await this.taskerRepository.findOne({
+            where: { id },
+            relations: ['skills'],
+        });
+        if (!tasker) {
+            throw new common_1.NotFoundException('Tasker not found');
         }
+        if (skillIds && skillIds.length > 0) {
+            const skills = await this.skillsService.findByIds(skillIds);
+            tasker.skills = skills;
+        }
+        return this.taskerRepository.save({
+            ...tasker,
+            work_area: work_area_code,
+            ...rest,
+        });
+    }
+    remove(id) {
+        return this.taskerRepository.delete({ id });
     }
 };
 exports.TaskersService = TaskersService;
 exports.TaskersService = TaskersService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(tasker_entity_1.Tasker)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        skills_service_1.SkillsService,
+        users_service_1.UsersService])
 ], TaskersService);
 //# sourceMappingURL=taskers.service.js.map

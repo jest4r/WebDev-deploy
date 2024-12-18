@@ -6,5 +6,8 @@ var Status;
     Status["POSTED"] = "POSTED";
     Status["PENDING"] = "PENDING";
     Status["IN_PROGRESS"] = "IN_PROGRESS";
+    Status["COMPLETED"] = "COMPLETED";
+    Status["CANCELLED"] = "CANCELLED";
+    Status["WAITING"] = "WAITING";
 })(Status || (exports.Status = Status = {}));
 //# sourceMappingURL=Status.enum.js.map

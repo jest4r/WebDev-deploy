@@ -18,22 +18,30 @@ const taskers_service_1 = require("./taskers.service");
 const create_tasker_dto_1 = require("./dto/create-tasker.dto");
 const update_tasker_dto_1 = require("./dto/update-tasker.dto");
 const swagger_1 = require("@nestjs/swagger");
-const tasker_entity_1 = require("./entities/tasker.entity");
+const role_guard_decorator_1 = require("../auth/decorator/role-guard.decorator");
+const Role_enum_1 = require("../enum/Role.enum");
 let TaskersController = class TaskersController {
     constructor(taskersService) {
         this.taskersService = taskersService;
     }
-    create(createTaskerDto) {
-        return this.taskersService.create(createTaskerDto);
+    create(req, createTaskerDto) {
+        const user_id = req.user.user_id;
+        return this.taskersService.create(user_id, createTaskerDto);
     }
     findAll() {
         return this.taskersService.findAll();
     }
-    findOne(id) {
-        return this.taskersService.findOne(+id);
+    findOne(req, id) {
+        if (id === 'me') {
+            return this.taskersService.findOne(req.user.tasker_id);
+        }
+        if (req.user.role === Role_enum_1.Role.ADMIN) {
+            return this.taskersService.findOne(+id);
+        }
+        throw new common_1.ForbiddenException('Insufficient permissions');
     }
-    update(id, updateTaskerDto) {
-        return this.taskersService.update(+id, updateTaskerDto);
+    update(req, updateTaskerDto) {
+        return this.taskersService.update(req.user.tasker_id, updateTaskerDto);
     }
     remove(id) {
         return this.taskersService.remove(+id);
@@ -41,58 +49,50 @@ let TaskersController = class TaskersController {
 };
 exports.TaskersController = TaskersController;
 __decorate([
+    (0, swagger_1.ApiBearerAuth)('JWT-auth'),
     (0, common_1.Post)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Create a new tasker' }),
-    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.CREATED, description: 'The tasker has been successfully created.', type: tasker_entity_1.Tasker }),
-    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.BAD_REQUEST, description: 'Invalid input.' }),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_tasker_dto_1.CreateTaskerDto]),
-    __metadata("design:returntype", Promise)
-], TaskersController.prototype, "create", null);
-__decorate([
-    (0, common_1.Get)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Get all taskers' }),
-    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.OK, description: 'Return all taskers.', type: [tasker_entity_1.Tasker] }),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], TaskersController.prototype, "findAll", null);
-__decorate([
-    (0, common_1.Get)(':id'),
-    (0, swagger_1.ApiOperation)({ summary: 'Get a tasker by ID' }),
-    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.OK, description: 'Return the tasker.', type: tasker_entity_1.Tasker }),
-    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.NOT_FOUND, description: 'Tasker not found.' }),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], TaskersController.prototype, "findOne", null);
-__decorate([
-    (0, common_1.Patch)(':id'),
-    (0, swagger_1.ApiOperation)({ summary: 'Update a tasker by ID' }),
-    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.OK, description: 'The tasker has been successfully updated.', type: tasker_entity_1.Tasker }),
-    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.NOT_FOUND, description: 'Tasker not found.' }),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_tasker_dto_1.UpdateTaskerDto]),
-    __metadata("design:returntype", Promise)
+    __metadata("design:paramtypes", [Object, create_tasker_dto_1.CreateTaskerDto]),
+    __metadata("design:returntype", void 0)
+], TaskersController.prototype, "create", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('JWT-auth'),
+    (0, role_guard_decorator_1.RolesGuard)([Role_enum_1.Role.ADMIN]),
+    (0, common_1.Get)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], TaskersController.prototype, "findAll", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('JWT-auth'),
+    (0, common_1.Get)(':id'),
+    (0, swagger_1.ApiParam)({ name: 'id', required: true }),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", void 0)
+], TaskersController.prototype, "findOne", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('JWT-auth'),
+    (0, common_1.Patch)(),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, update_tasker_dto_1.UpdateTaskerDto]),
+    __metadata("design:returntype", void 0)
 ], TaskersController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
-    (0, common_1.HttpCode)(common_1.HttpStatus.NO_CONTENT),
-    (0, swagger_1.ApiOperation)({ summary: 'Delete a tasker by ID' }),
-    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.NO_CONTENT, description: 'The tasker has been successfully deleted.' }),
-    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.NOT_FOUND, description: 'Tasker not found.' }),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
+    __metadata("design:returntype", void 0)
 ], TaskersController.prototype, "remove", null);
 exports.TaskersController = TaskersController = __decorate([
     (0, common_1.Controller)('taskers'),
-    (0, swagger_1.ApiTags)('Taskers'),
     __metadata("design:paramtypes", [taskers_service_1.TaskersService])
 ], TaskersController);
 //# sourceMappingURL=taskers.controller.js.map

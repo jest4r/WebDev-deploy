@@ -10,14 +10,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
-const Gender_enum_1 = require("../../enum/Gender.enum");
 const Role_enum_1 = require("../../enum/Role.enum");
-const payment_entity_1 = require("../../payments/entities/payment.entity");
-const task_entity_1 = require("../../tasks/entities/task.entity");
 const typeorm_1 = require("typeorm");
+const profile_entity_1 = require("./profile.entity");
+const tasker_entity_1 = require("../../taskers/entities/tasker.entity");
 let User = class User {
     updateTimestamps() {
-        this.created_at = new Date();
+        this.create_at = new Date();
         this.updated_at = new Date();
     }
     updateTimestamp() {
@@ -30,49 +29,25 @@ __decorate([
     __metadata("design:type", Number)
 ], User.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'varchar', nullable: false }),
-    __metadata("design:type", String)
-], User.prototype, "fullname", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ unique: true }),
+    (0, typeorm_1.Column)({ type: 'varchar', unique: true, nullable: false }),
     __metadata("design:type", String)
 ], User.prototype, "email", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", String)
-], User.prototype, "phone_number", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ type: 'varchar', nullable: false }),
     __metadata("design:type", String)
 ], User.prototype, "password", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: Gender_enum_1.Gender, nullable: true }),
-    __metadata("design:type", String)
-], User.prototype, "gender", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ type: 'date', nullable: true }),
-    __metadata("design:type", String)
-], User.prototype, "date_of_birth", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ type: 'text', nullable: true }),
-    __metadata("design:type", String)
-], User.prototype, "description", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'enum', enum: Role_enum_1.Role, default: Role_enum_1.Role.USER }),
     __metadata("design:type", String)
 ], User.prototype, "role", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'timestamp' }),
+    (0, typeorm_1.Column)({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }),
     __metadata("design:type", Date)
-], User.prototype, "created_at", void 0);
+], User.prototype, "create_at", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'timestamp' }),
+    (0, typeorm_1.Column)({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' }),
     __metadata("design:type", Date)
 ], User.prototype, "updated_at", void 0);
-__decorate([
-    (0, typeorm_1.OneToMany)(() => task_entity_1.Task, (task) => task.user),
-    __metadata("design:type", Array)
-], User.prototype, "tasks", void 0);
 __decorate([
     (0, typeorm_1.BeforeInsert)(),
     __metadata("design:type", Function),
@@ -86,9 +61,15 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], User.prototype, "updateTimestamp", null);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => payment_entity_1.Payment, (payment) => payment.user),
-    __metadata("design:type", Array)
-], User.prototype, "payments", void 0);
+    (0, typeorm_1.OneToOne)(() => profile_entity_1.Profile, (profile) => profile.user),
+    (0, typeorm_1.JoinColumn)({ name: 'profile_id' }),
+    __metadata("design:type", profile_entity_1.Profile)
+], User.prototype, "profile", void 0);
+__decorate([
+    (0, typeorm_1.OneToOne)(() => tasker_entity_1.Tasker, (tasker) => tasker.user),
+    (0, typeorm_1.JoinColumn)({ name: 'tasker_id' }),
+    __metadata("design:type", tasker_entity_1.Tasker)
+], User.prototype, "tasker", void 0);
 exports.User = User = __decorate([
     (0, typeorm_1.Entity)()
 ], User);
