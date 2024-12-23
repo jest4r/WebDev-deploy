@@ -1,24 +1,12 @@
-import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskDto } from './dto/update-task.dto';
 import { Repository } from 'typeorm';
+import { CreateTaskDto } from './dto/create-task.dto';
 import { Task } from './entities/task.entity';
-import { UsersService } from 'src/users/users.service';
-import { TaskersService } from 'src/taskers/taskers.service';
-import { SkillsService } from 'src/skills/skills.service';
-import { TaskActionService } from './task-action.service';
 export declare class TasksService {
-    private taskRepository;
-    private readonly usersService;
-    private readonly taskersService;
-    private readonly skillService;
-    private readonly taskActionService;
-    constructor(taskRepository: Repository<Task>, usersService: UsersService, taskersService: TaskersService, skillService: SkillsService, taskActionService: TaskActionService);
-    create(user_id: number, createTaskDto: CreateTaskDto): Promise<Task>;
-    findAllForAdmin(): Promise<Task[]>;
-    findAllForUser(): Promise<Task[]>;
-    findUserTasks(user_id: number): Promise<Task[]>;
-    findTaskerTasks(tasker_id: number): Promise<Task[]>;
+    private tasksRepository;
+    constructor(tasksRepository: Repository<Task>);
+    create(createTaskDto: CreateTaskDto): Promise<Task>;
+    findAll(): Promise<Task[]>;
     findOne(id: number): Promise<Task>;
-    update(id: number, updateTaskDto: UpdateTaskDto): Promise<import("typeorm").UpdateResult>;
-    remove(user_id: number, id: number): Promise<Task>;
+    findAllByUserId(user_id: number): Promise<Task[]>;
+    remove(id: number): Promise<void>;
 }

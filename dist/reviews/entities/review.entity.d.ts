@@ -1,8 +1,12 @@
-import { Task } from 'src/tasks/entities/task.entity';
 export declare class Review {
     id: number;
-    rating: number;
-    comment: string;
-    image: string;
-    task: Task;
+    tasker_id: number;
+    user_id: number;
+    customer_rating: number;
+    customer_review: string;
+    feedback_customer: string;
+    created_at: Date;
+    updated_at: Date;
+    updateTimestamps(): void;
+    updateTimestamp(): void;
 }

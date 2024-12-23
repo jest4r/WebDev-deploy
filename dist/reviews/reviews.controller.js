@@ -14,61 +14,98 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReviewsController = void 0;
 const common_1 = require("@nestjs/common");
+const swagger_1 = require("@nestjs/swagger");
 const reviews_service_1 = require("./reviews.service");
 const create_review_dto_1 = require("./dto/create-review.dto");
-const swagger_1 = require("@nestjs/swagger");
-const public_decorator_1 = require("../auth/decorator/public.decorator");
+const update_review_dto_1 = require("./dto/update-review.dto");
+const review_entity_1 = require("./entities/review.entity");
 let ReviewsController = class ReviewsController {
     constructor(reviewsService) {
         this.reviewsService = reviewsService;
     }
-    create(createReviewDto, req) {
-        return this.reviewsService.create(createReviewDto, req.user.user_id);
+    create(createReviewDto) {
+        return this.reviewsService.create(createReviewDto);
     }
-    findAll(tasker_id, review_id) {
-        if (tasker_id) {
-            return this.reviewsService.findAll(Number(tasker_id));
-        }
-        if (review_id) {
-            return this.reviewsService.findOne(Number(review_id));
-        }
-        throw new common_1.BadRequestException('Either tasker_id or task_id must be provided');
+    findAll() {
+        return this.reviewsService.findAll();
+    }
+    getReviewsByTasker(tasker_id) {
+        return this.reviewsService.findAllByTasker(+tasker_id);
+    }
+    findOne(id) {
+        return this.reviewsService.findOne(+id);
+    }
+    update(id, updateReviewDto, user_id) {
+        return this.reviewsService.update(+id, updateReviewDto, user_id);
+    }
+    remove(id) {
+        return this.reviewsService.remove(+id);
     }
 };
 exports.ReviewsController = ReviewsController;
 __decorate([
     (0, common_1.Post)(),
-    (0, swagger_1.ApiBearerAuth)('JWT-auth'),
+    (0, swagger_1.ApiOperation)({ summary: 'Create a new review' }),
+    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.CREATED, description: 'The review has been successfully created.', type: review_entity_1.Review }),
+    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.BAD_REQUEST, description: 'Invalid input.' }),
     __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_review_dto_1.CreateReviewDto, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [create_review_dto_1.CreateReviewDto]),
+    __metadata("design:returntype", Promise)
 ], ReviewsController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
-    (0, public_decorator_1.Public)(),
-    (0, swagger_1.ApiQuery)({
-        name: 'tasker_id',
-        required: false,
-        type: Number,
-        description: 'ID of the tasker to get reviews',
-    }),
-    (0, swagger_1.ApiQuery)({
-        name: 'task_id',
-        required: false,
-        type: Number,
-        description: 'ID of specific review',
-    }),
-    __param(0, (0, common_1.Query)('tasker_id')),
-    __param(1, (0, common_1.Query)('task_id')),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all review' }),
+    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.OK, description: 'Return all review.', type: [review_entity_1.Review] }),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
 ], ReviewsController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('tasker/:tasker_id'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all reviews for a specific tasker' }),
+    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.OK, description: 'Return all reviews for the tasker.', type: [review_entity_1.Review] }),
+    __param(0, (0, common_1.Param)('tasker_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], ReviewsController.prototype, "getReviewsByTasker", null);
+__decorate([
+    (0, common_1.Get)(':id'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get a review by ID' }),
+    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.OK, description: 'Return the review.', type: review_entity_1.Review }),
+    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.NOT_FOUND, description: 'Review not found.' }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], ReviewsController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Patch)(':id'),
+    (0, swagger_1.ApiOperation)({ summary: 'Update a review by ID' }),
+    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.OK, description: 'The review has been successfully updated.', type: review_entity_1.Review }),
+    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.NOT_FOUND, description: 'Review not found.' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Body)('user_id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, update_review_dto_1.UpdateReviewDto, Number]),
+    __metadata("design:returntype", Promise)
+], ReviewsController.prototype, "update", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.NO_CONTENT),
+    (0, swagger_1.ApiOperation)({ summary: 'Delete a review by ID' }),
+    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.NO_CONTENT, description: 'The review has been successfully deleted.' }),
+    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.NOT_FOUND, description: 'Review not found.' }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], ReviewsController.prototype, "remove", null);
 exports.ReviewsController = ReviewsController = __decorate([
+    (0, swagger_1.ApiTags)('reviews'),
     (0, common_1.Controller)('reviews'),
-    (0, swagger_1.ApiTags)('Reviews'),
     __metadata("design:paramtypes", [reviews_service_1.ReviewsService])
 ], ReviewsController);
 //# sourceMappingURL=reviews.controller.js.map

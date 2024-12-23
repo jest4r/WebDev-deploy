@@ -22,13 +22,9 @@ const Role_enum_1 = require("../enum/Role.enum");
 const role_guard_1 = require("./guards/role.guard");
 const roles_decorator_1 = require("./decorator/roles.decorator");
 const public_decorator_1 = require("./decorator/public.decorator");
-const refresh_token_dto_1 = require("./dto/refresh-token.dto");
-const email_service_1 = require("../email/email.service");
-const otp_dto_1 = require("./dto/otp.dto");
 let AuthController = class AuthController {
-    constructor(authService, emailService) {
+    constructor(authService) {
         this.authService = authService;
-        this.emailService = emailService;
     }
     async register(registerDto) {
         return this.authService.register(registerDto);
@@ -37,18 +33,13 @@ let AuthController = class AuthController {
         return this.authService.login(loginDto);
     }
     async test(req) {
-        console.log('Send email');
-        this.emailService.sendWelcomeEmail('xuantruong.tn.1712@gmail.com');
         return req.user;
     }
     async admin(req) {
         return 'Admin only endpoint';
     }
-    async refresh(refreshTokenDto) {
-        return this.authService.refresh(refreshTokenDto.refresh_token);
-    }
-    async otp(body) {
-        return this.authService.sendOTP(body.email);
+    async refresh(refreshToken) {
+        return this.authService.refresh(refreshToken);
     }
 };
 exports.AuthController = AuthController;
@@ -101,28 +92,14 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Refresh token' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Token refreshed' }),
     (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad request' }),
-    (0, public_decorator_1.Public)(),
-    (0, common_1.Post)('refresh'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [refresh_token_dto_1.RefreshTokenDto]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "refresh", null);
-__decorate([
-    (0, swagger_1.ApiOperation)({ summary: 'OTP send' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'OTP sent' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Bad request' }),
-    (0, public_decorator_1.Public)(),
-    (0, common_1.Post)('otp'),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [otp_dto_1.OtpDto]),
-    __metadata("design:returntype", Promise)
-], AuthController.prototype, "otp", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     (0, swagger_1.ApiTags)('Auth'),
-    __metadata("design:paramtypes", [auth_service_1.AuthService,
-        email_service_1.default])
+    __metadata("design:paramtypes", [auth_service_1.AuthService])
 ], AuthController);
 //# sourceMappingURL=auth.controller.js.map

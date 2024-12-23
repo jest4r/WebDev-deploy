@@ -1,9 +1,14 @@
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
-import { AuthRequest } from 'src/auth/interface/auth-request.interface';
+import { UpdateReviewDto } from './dto/update-review.dto';
+import { Review } from './entities/review.entity';
 export declare class ReviewsController {
     private readonly reviewsService;
     constructor(reviewsService: ReviewsService);
-    create(createReviewDto: CreateReviewDto, req: AuthRequest): Promise<import("./entities/review.entity").Review>;
-    findAll(tasker_id?: string, review_id?: string): Promise<import("./entities/review.entity").Review> | Promise<import("./entities/review.entity").Review[]>;
+    create(createReviewDto: CreateReviewDto): Promise<Review>;
+    findAll(): Promise<Review[]>;
+    getReviewsByTasker(tasker_id: string): Promise<Review[]>;
+    findOne(id: string): Promise<Review>;
+    update(id: string, updateReviewDto: UpdateReviewDto, user_id: number): Promise<Review>;
+    remove(id: string): Promise<void>;
 }

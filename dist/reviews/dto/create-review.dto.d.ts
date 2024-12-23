@@ -1,6 +1,8 @@
 export declare class CreateReviewDto {
-    rating: number;
-    comment: string;
-    task_id: number;
-    image: string;
+    id: number;
+    tasker_id: number;
+    user_id: number;
+    customer_rating: number;
+    customer_review: string;
+    feedback_customer: string;
 }

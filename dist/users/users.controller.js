@@ -44,6 +44,9 @@ let UsersController = class UsersController {
         if (id === 'me') {
             return this.usersService.update(req.user.user_id, updateUserDto);
         }
+        if (req.user.role === Role_enum_1.Role.ADMIN) {
+            return this.usersService.update(Number(id), updateUserDto);
+        }
         throw new common_1.ForbiddenException("You don't have permission to access this resource");
     }
     remove(req, id) {
@@ -51,7 +54,7 @@ let UsersController = class UsersController {
             return this.usersService.remove(req.user.user_id);
         }
         if (req.user.role === Role_enum_1.Role.ADMIN) {
-            return this.usersService.remove(+id);
+            return this.usersService.remove(Number(id));
         }
         throw new common_1.ForbiddenException("You don't have permission to access this resource");
     }
@@ -62,7 +65,6 @@ __decorate([
     (0, roles_decorator_1.Roles)(Role_enum_1.Role.ADMIN),
     (0, common_1.Post)(),
     (0, swagger_1.ApiBearerAuth)('JWT-auth'),
-    (0, swagger_1.ApiBody)({ type: create_user_dto_1.CreateUserDto }),
     (0, swagger_1.ApiOperation)({ summary: 'ADMIN: create new user' }),
     (0, swagger_1.ApiResponse)({
         status: 201,
@@ -107,7 +109,6 @@ __decorate([
 __decorate([
     (0, common_1.Patch)(':id'),
     (0, swagger_1.ApiBearerAuth)('JWT-auth'),
-    (0, swagger_1.ApiParam)({ name: 'id', required: true }),
     (0, swagger_1.ApiOperation)({
         summary: 'ADMIN: /:id, USER: /me to update current user',
     }),
@@ -116,7 +117,7 @@ __decorate([
         description: 'Return the user updated by ID.',
     }),
     __param(0, (0, common_1.Req)()),
-    __param(1, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Param)()),
     __param(2, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, String, update_user_dto_1.UpdateUserDto]),

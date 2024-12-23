@@ -17,111 +17,57 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const task_entity_1 = require("./entities/task.entity");
-const users_service_1 = require("../users/users.service");
-const console_1 = require("console");
-const taskers_service_1 = require("../taskers/taskers.service");
-const Status_enum_1 = require("../enum/Status.enum");
-const skills_service_1 = require("../skills/skills.service");
-const task_action_service_1 = require("./task-action.service");
 let TasksService = class TasksService {
-    constructor(taskRepository, usersService, taskersService, skillService, taskActionService) {
-        this.taskRepository = taskRepository;
-        this.usersService = usersService;
-        this.taskersService = taskersService;
-        this.skillService = skillService;
-        this.taskActionService = taskActionService;
+    constructor(tasksRepository) {
+        this.tasksRepository = tasksRepository;
     }
-    async create(user_id, createTaskDto) {
-        const user = await this.usersService.findById(user_id);
-        const skill = await this.skillService.findOne(createTaskDto.skill_id);
-        const task = this.taskRepository.create({
-            ...createTaskDto,
-            user,
-            skill,
-        });
-        this.taskActionService.notifyTaskers(task);
-        return await this.taskRepository.save(task);
-    }
-    findAllForAdmin() {
-        return this.taskRepository.find({
-            relations: ['skill', 'user', 'tasker', 'taskers', 'review'],
-            order: { created_at: 'DESC' },
-        });
-    }
-    async findAllForUser() {
-        return await this.taskRepository.find({
-            where: { task_status: Status_enum_1.Status.POSTED },
-            relations: ['skill'],
-            order: { created_at: 'DESC' },
-        });
-    }
-    async findUserTasks(user_id) {
-        const user = await this.usersService.findById(user_id).catch(() => {
-            throw new common_1.NotFoundException('User not found');
-        });
-        return this.taskRepository.find({
-            where: { user: { id: user.id } },
-            relations: [
-                'tasker',
-                'skill',
-                'taskers',
-                'taskers.skills',
-                'tasker.skills',
-                'review',
-            ],
-            order: { created_at: 'DESC' },
-        });
-    }
-    async findTaskerTasks(tasker_id) {
-        const tasker = await this.taskersService.findOne(tasker_id);
-        return this.taskRepository.find({
-            where: { tasker: { id: tasker.id } },
-            relations: ['user', 'skill', 'review'],
-            order: { created_at: 'DESC' },
-        });
-    }
-    findOne(id) {
-        const task = this.taskRepository.findOne({
-            where: { id },
-            relations: ['skill'],
-        });
-        if (!task) {
-            throw console_1.error;
-        }
-        return task;
-    }
-    update(id, updateTaskDto) {
-        const { title, description, district, ward, detail_address, estimated_duration, fee_per_hour, } = updateTaskDto;
-        return this.taskRepository.update(id, {
-            title,
-            description,
-            district,
-            ward,
-            detail_address,
-            estimated_duration,
-            fee_per_hour,
-        });
-    }
-    async remove(user_id, id) {
+    async create(createTaskDto) {
         try {
-            if (!user_id) {
-                throw new common_1.ForbiddenException('You must be a user to delete a task');
-            }
-            const task = await this.taskRepository.findOne({
-                where: { id },
-                relations: ['user'],
-            });
-            if (!task) {
-                throw new common_1.NotFoundException('Task not found');
-            }
-            if (task.user.id !== user_id) {
-                throw new common_1.ForbiddenException('You can only delete your own tasks');
-            }
-            task.task_status = Status_enum_1.Status.CANCELLED;
-            return this.taskRepository.save(task);
+            const task = this.tasksRepository.create(createTaskDto);
+            return await this.tasksRepository.save(task);
         }
-        catch (e) {
-            throw e;
+        catch (error) {
+            console.error('Error creating task:', error.message);
+            throw new Error('Error creating task');
+        }
+    }
+    async findAll() {
+        try {
+            return await this.tasksRepository.find();
+        }
+        catch (error) {
+            throw new Error('Error finding tasks');
+        }
+    }
+    async findOne(id) {
+        try {
+            const task = await this.tasksRepository.findOne({ where: { id } });
+            if (!task) {
+                throw new common_1.NotFoundException(`Task with ID ${id} not found`);
+            }
+            return task;
+        }
+        catch (error) {
+            throw new Error('Error finding task');
+        }
+    }
+    async findAllByUserId(user_id) {
+        try {
+            return await this.tasksRepository.find({ where: { user_id } });
+        }
+        catch (error) {
+            throw new Error('Error finding tasks');
+        }
+    }
+    async remove(id) {
+        try {
+            const result = await this.tasksRepository.delete(id);
+            if (result.affected === 0) {
+                throw new common_1.NotFoundException(`Task with ID ${id} not found`);
+            }
+        }
+        catch (error) {
+            throw new Error('Error deleting task');
         }
     }
 };
@@ -129,10 +75,6 @@ exports.TasksService = TasksService;
 exports.TasksService = TasksService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(task_entity_1.Task)),
-    __metadata("design:paramtypes", [typeorm_2.Repository,
-        users_service_1.UsersService,
-        taskers_service_1.TaskersService,
-        skills_service_1.SkillsService,
-        task_action_service_1.TaskActionService])
+    __metadata("design:paramtypes", [typeorm_2.Repository])
 ], TasksService);
 //# sourceMappingURL=tasks.service.js.map

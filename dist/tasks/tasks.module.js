@@ -10,31 +10,17 @@ exports.TasksModule = void 0;
 const common_1 = require("@nestjs/common");
 const tasks_service_1 = require("./tasks.service");
 const tasks_controller_1 = require("./tasks.controller");
-const typeorm_1 = require("@nestjs/typeorm");
 const task_entity_1 = require("./entities/task.entity");
+const typeorm_1 = require("@nestjs/typeorm");
 const users_module_1 = require("../users/users.module");
-const taskers_module_1 = require("../taskers/taskers.module");
-const task_action_service_1 = require("./task-action.service");
-const skills_module_1 = require("../skills/skills.module");
-const event_emitter_1 = require("@nestjs/event-emitter");
-const notifications_module_1 = require("../notifications/notifications.module");
-const email_module_1 = require("../email/email.module");
 let TasksModule = class TasksModule {
 };
 exports.TasksModule = TasksModule;
 exports.TasksModule = TasksModule = __decorate([
     (0, common_1.Module)({
-        imports: [
-            typeorm_1.TypeOrmModule.forFeature([task_entity_1.Task]),
-            users_module_1.UsersModule,
-            taskers_module_1.TaskersModule,
-            skills_module_1.SkillsModule,
-            notifications_module_1.NotificationsModule,
-            email_module_1.EmailModule,
-            event_emitter_1.EventEmitterModule.forRoot(),
-        ],
+        imports: [typeorm_1.TypeOrmModule.forFeature([task_entity_1.Task]), users_module_1.UsersModule],
         controllers: [tasks_controller_1.TasksController],
-        providers: [tasks_service_1.TasksService, task_action_service_1.TaskActionService],
+        providers: [tasks_service_1.TasksService],
         exports: [tasks_service_1.TasksService],
     })
 ], TasksModule);

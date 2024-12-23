@@ -1,27 +1,21 @@
 import { Status } from 'src/enum/Status.enum';
-import { Review } from 'src/reviews/entities/review.entity';
-import { Skill } from 'src/skills/entities/skill.entity';
-import { Tasker } from 'src/taskers/entities/tasker.entity';
+import { Service } from 'src/services/entities/service.entity';
 import { User } from 'src/users/entities/user.entity';
 export declare class Task {
     id: number;
+    address_id: number;
     title: string;
     description: string;
-    task_status: Status;
-    district: string;
-    ward: string;
-    detail_address: string;
-    estimated_duration: number;
-    fee_per_hour: string;
-    start_date: Date;
-    end_date: Date;
+    service_id: number;
+    amount: string;
+    status: Status;
+    user_id: number;
+    tasker_id: number;
     created_at: Date;
     updated_at: Date;
-    setDefaults(): void;
-    setUpdatedAt(): void;
+    confirmed_at: Date;
     user: User;
-    taskers: Tasker[];
-    tasker: Tasker;
-    skill: Skill;
-    review: Review;
+    service: Service;
+    updateTimestamps(): void;
+    updateTimestamp(): void;
 }

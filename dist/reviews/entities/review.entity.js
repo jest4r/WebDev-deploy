@@ -10,9 +10,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Review = void 0;
-const task_entity_1 = require("../../tasks/entities/task.entity");
 const typeorm_1 = require("typeorm");
 let Review = class Review {
+    updateTimestamps() {
+        this.created_at = new Date();
+        this.updated_at = new Date();
+    }
+    updateTimestamp() {
+        this.updated_at = new Date();
+    }
 };
 exports.Review = Review;
 __decorate([
@@ -22,20 +28,43 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", Number)
-], Review.prototype, "rating", void 0);
+], Review.prototype, "tasker_id", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Number)
+], Review.prototype, "user_id", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'decimal', precision: 3, scale: 1 }),
+    __metadata("design:type", Number)
+], Review.prototype, "customer_rating", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], Review.prototype, "comment", void 0);
+], Review.prototype, "customer_review", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'varchar', nullable: true }),
+    (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], Review.prototype, "image", void 0);
+], Review.prototype, "feedback_customer", void 0);
 __decorate([
-    (0, typeorm_1.OneToOne)(() => task_entity_1.Task, (task) => task.review),
-    (0, typeorm_1.JoinColumn)({ name: 'task_id' }),
-    __metadata("design:type", task_entity_1.Task)
-], Review.prototype, "task", void 0);
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Date)
+], Review.prototype, "created_at", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Date)
+], Review.prototype, "updated_at", void 0);
+__decorate([
+    (0, typeorm_1.BeforeInsert)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], Review.prototype, "updateTimestamps", null);
+__decorate([
+    (0, typeorm_1.BeforeUpdate)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], Review.prototype, "updateTimestamp", null);
 exports.Review = Review = __decorate([
     (0, typeorm_1.Entity)()
 ], Review);

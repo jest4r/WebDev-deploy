@@ -1,3 +1,0 @@
-import { Task } from 'src/tasks/entities/task.entity';
-import { User } from 'src/users/entities/user.entity';
-export declare const sendUserProfileForTasker: (task: Task, user: User, viewTaskDetailsUrl: string) => string;

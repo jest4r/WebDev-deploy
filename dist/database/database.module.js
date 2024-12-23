@@ -12,8 +12,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const config_1 = require("@nestjs/config");
 let DatabaseModule = class DatabaseModule {
     onModuleInit() {
-        const dbType = process.env.DB_TYPE || 'mysql';
-        common_1.Logger.log(`Database module initialized with ${dbType} database`, 'DatabaseModule');
+        common_1.Logger.log('Database module has been initialized', 'DatabaseModule');
     }
 };
 exports.DatabaseModule = DatabaseModule;
@@ -26,27 +25,16 @@ exports.DatabaseModule = DatabaseModule = __decorate([
             typeorm_1.TypeOrmModule.forRootAsync({
                 imports: [config_1.ConfigModule],
                 inject: [config_1.ConfigService],
-                useFactory: (configService) => {
-                    const dbType = configService.get('DB_TYPE', 'mysql');
-                    const baseConfig = {
-                        type: dbType,
-                        url: configService.get('DATABASE_URL', ''),
-                        entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-                        synchronize: configService.get('DB_SYNCHRONIZE', true),
-                        logging: configService.get('DB_LOGGING', false),
-                    };
-                    const typeSpecificConfig = dbType === 'postgres'
-                        ? {
-                            ssl: configService.get('DB_SSL', false),
-                        }
-                        : {
-                            charset: 'utf8mb4',
-                        };
-                    return {
-                        ...baseConfig,
-                        ...typeSpecificConfig,
-                    };
-                },
+                useFactory: (configService) => ({
+                    type: 'mysql',
+                    host: configService.get('DB_HOST', 'autorack.proxy.rlwy.net'),
+                    port: configService.get('DB_PORT', 46884),
+                    username: configService.get('DB_USERNAME', 'root'),
+                    password: configService.get('DB_PASSWORD', 'AVTMEjRtTJliUKogpqtSJwPhUIzHtrSg'),
+                    database: configService.get('DB_NAME', 'railway'),
+                    entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+                    synchronize: true,
+                }),
             }),
         ],
     })

@@ -17,72 +17,84 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const review_entity_1 = require("./entities/review.entity");
-const task_entity_1 = require("../tasks/entities/task.entity");
-const Status_enum_1 = require("../enum/Status.enum");
-const tasker_entity_1 = require("../taskers/entities/tasker.entity");
 let ReviewsService = class ReviewsService {
-    constructor(taskerRepository, reviewRepository, taskRepository) {
-        this.taskerRepository = taskerRepository;
-        this.reviewRepository = reviewRepository;
-        this.taskRepository = taskRepository;
+    constructor(reviewsRepository) {
+        this.reviewsRepository = reviewsRepository;
     }
-    async create(createReviewDto, user_id) {
+    async create(createReviewDto) {
         try {
-            const { task_id } = createReviewDto;
-            const task = await this.taskRepository.findOne({
-                where: { id: task_id },
-                relations: ['user', 'tasker', 'review'],
-            });
-            if (task.review) {
-                throw new common_1.ConflictException('You have already reviewed this task');
-            }
-            if (task.task_status !== Status_enum_1.Status.COMPLETED) {
-                throw new common_1.ForbiddenException('You are not allowed to review this task');
-            }
-            if (task.user.id !== user_id) {
-                throw new common_1.ForbiddenException('You are not allowed to review this task');
-            }
-            if (!task) {
-                throw new common_1.NotFoundException('Task not found');
-            }
-            const review = this.reviewRepository.create(createReviewDto);
-            review.task = task;
-            const res = await this.reviewRepository.save(review);
-            const tasker = await this.taskerRepository.findOne({
-                where: { id: task.tasker.id },
-            });
-            tasker.rating_sum += createReviewDto.rating;
-            tasker.rating_count += 1;
-            await this.taskerRepository.save(tasker);
-            return res;
+            const review = this.reviewsRepository.create(createReviewDto);
+            return await this.reviewsRepository.save(review);
         }
         catch (error) {
-            throw error;
+            console.error('Error creating Review:', error.message);
+            throw new Error('Error creating Review');
         }
     }
-    findAll(tasker_id) {
-        const reviews = this.reviewRepository.find({
-            where: { task: { tasker: { id: tasker_id } } },
-            relations: ['task', 'task.skill'],
-        });
-        return reviews;
+    async findAll() {
+        try {
+            return await this.reviewsRepository.find();
+        }
+        catch (error) {
+            throw new Error('Error finding Review');
+        }
     }
-    findOne(task_id) {
-        const review = this.reviewRepository.findOne({
-            where: { task: { id: task_id } },
-            relations: ['task', 'task.skill'],
-        });
-        return review;
+    async findAllByTasker(tasker_id) {
+        try {
+            return await this.reviewsRepository.find({ where: { tasker_id } });
+        }
+        catch (error) {
+            throw new Error('Error finding reviews for tasker');
+        }
+    }
+    async findOne(id) {
+        try {
+            const review = await this.reviewsRepository.findOne({ where: { id } });
+            if (!review) {
+                throw new common_1.NotFoundException(`Review with ID ${id} not found`);
+            }
+            return review;
+        }
+        catch (error) {
+            throw new Error('Error finding Review');
+        }
+    }
+    async update(id, updateReviewDto, user_id) {
+        try {
+            const review = await this.reviewsRepository.findOne({ where: { id } });
+            if (!review) {
+                throw new common_1.NotFoundException(`Review with ID ${id} not found`);
+            }
+            if (review.user_id !== user_id) {
+                throw new common_1.ForbiddenException('You are not allowed to update this review');
+            }
+            await this.reviewsRepository.update(id, updateReviewDto);
+            const updatedReview = await this.reviewsRepository.findOne({ where: { id } });
+            if (!updatedReview) {
+                throw new common_1.NotFoundException(`Review with ID ${id} not found`);
+            }
+            return updatedReview;
+        }
+        catch (error) {
+            throw new Error('Error updating Review');
+        }
+    }
+    async remove(id) {
+        try {
+            const result = await this.reviewsRepository.delete(id);
+            if (result.affected === 0) {
+                throw new common_1.NotFoundException(`Review with ID ${id} not found`);
+            }
+        }
+        catch (error) {
+            throw new Error('Error deleting Review');
+        }
     }
 };
 exports.ReviewsService = ReviewsService;
 exports.ReviewsService = ReviewsService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_1.InjectRepository)(tasker_entity_1.Tasker)),
-    __param(1, (0, typeorm_1.InjectRepository)(review_entity_1.Review)),
-    __param(2, (0, typeorm_1.InjectRepository)(task_entity_1.Task)),
-    __metadata("design:paramtypes", [typeorm_2.Repository,
-        typeorm_2.Repository,
-        typeorm_2.Repository])
+    __param(0, (0, typeorm_1.InjectRepository)(review_entity_1.Review)),
+    __metadata("design:paramtypes", [typeorm_2.Repository])
 ], ReviewsService);
 //# sourceMappingURL=reviews.service.js.map

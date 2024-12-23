@@ -3,14 +3,11 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { Omit } from 'lodash';
-import { Profile } from './entities/profile.entity';
 export declare class UsersService {
     private usersRepository;
-    private profileRepository;
-    constructor(usersRepository: Repository<User>, profileRepository: Repository<Profile>);
+    constructor(usersRepository: Repository<User>);
     create(createUserDto: CreateUserDto): Promise<Omit<User, 'password'>>;
     findAll(): Promise<Omit<User, 'password'>[]>;
-    findAllAdmin(): Promise<Omit<User, 'password'>[]>;
     findById(id: number): Promise<Omit<User, 'password'>>;
     findByEmail(email: string): Promise<Omit<User, 'password'>>;
     findByEmailForAuth(email: string): Promise<User>;

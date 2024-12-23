@@ -15,100 +15,47 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TaskersService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
-const tasker_entity_1 = require("./entities/tasker.entity");
 const typeorm_2 = require("typeorm");
-const skills_service_1 = require("../skills/skills.service");
-const users_service_1 = require("../users/users.service");
+const tasker_entity_1 = require("./entities/tasker.entity");
 let TaskersService = class TaskersService {
-    constructor(taskerRepository, skillsService, usersService) {
+    constructor(taskerRepository) {
         this.taskerRepository = taskerRepository;
-        this.skillsService = skillsService;
-        this.usersService = usersService;
     }
-    convertArrayToString(numbers) {
-        return numbers.join(', ');
-    }
-    async create(user_id, createTaskerDto) {
+    async create(createTaskerDto) {
         try {
-            const { skillIds, work_area, experience, ...rest } = createTaskerDto;
-            const work_area_code = this.convertArrayToString(work_area);
-            const skills = await this.skillsService.findByIds(skillIds);
-            const user = await this.usersService.findById(user_id);
-            if (user.tasker) {
-                throw new common_1.ConflictException('User is already a tasker');
-            }
-            const tasker = this.taskerRepository.create({
-                ...createTaskerDto,
-                work_area: work_area_code,
-                user,
-                skills,
-            });
-            return this.taskerRepository.save(tasker);
+            const tasker = this.taskerRepository.create(createTaskerDto);
+            return await this.taskerRepository.save(tasker);
         }
         catch (error) {
             throw error;
         }
     }
-    findAll() {
-        return this.taskerRepository.find({
-            relations: ['skills', 'user', 'user.profile'],
-        });
+    async findAll() {
+        return await this.taskerRepository.find();
     }
-    findOne(id) {
-        try {
-            const tasker = this.taskerRepository.findOne({
-                where: { id },
-                relations: ['skills'],
-            });
-            if (!tasker) {
-                throw new common_1.NotFoundException('Tasker not found');
-            }
-            return tasker;
+    async findOne(id) {
+        const tasker = await this.taskerRepository.findOne({ where: { id } });
+        if (!tasker) {
+            throw new common_1.NotFoundException(`Tasker with ID ${id} not found`);
         }
-        catch (error) {
-            throw error;
-        }
-    }
-    async getAllTaskerData(id) {
-        const tasker = await this.taskerRepository.findOne({
-            where: { id },
-            relations: ['skills', 'user', 'user.profile'],
-        });
         return tasker;
     }
     async update(id, updateTaskerDto) {
-        const { skillIds, work_area, ...rest } = updateTaskerDto;
-        const work_area_code = this.convertArrayToString(work_area);
-        const tasker = await this.taskerRepository.findOne({
-            where: { id },
-            relations: ['skills'],
-        });
-        if (!tasker) {
-            throw new common_1.NotFoundException('Tasker not found');
-        }
-        if (skillIds && skillIds.length > 0) {
-            const skills = await this.skillsService.findByIds(skillIds);
-            tasker.skills = skills;
-        }
-        return this.taskerRepository.save({
-            ...tasker,
-            work_area: work_area_code,
-            ...rest,
-        });
+        const tasker = await this.findOne(id);
+        const updatedTasker = Object.assign(tasker, updateTaskerDto);
+        return await this.taskerRepository.save(updatedTasker);
     }
-    updateCompletedTasks(id) {
-        return this.taskerRepository.update({ id }, { completed_tasks: () => 'completed_tasks + 1' });
-    }
-    remove(id) {
-        return this.taskerRepository.delete({ id });
+    async remove(id) {
+        const result = await this.taskerRepository.delete(id);
+        if (result.affected === 0) {
+            throw new common_1.NotFoundException(`Tasker with ID ${id} not found`);
+        }
     }
 };
 exports.TaskersService = TaskersService;
 exports.TaskersService = TaskersService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(tasker_entity_1.Tasker)),
-    __metadata("design:paramtypes", [typeorm_2.Repository,
-        skills_service_1.SkillsService,
-        users_service_1.UsersService])
+    __metadata("design:paramtypes", [typeorm_2.Repository])
 ], TaskersService);
 //# sourceMappingURL=taskers.service.js.map

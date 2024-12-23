@@ -1,19 +1,14 @@
-import { Skill } from 'src/skills/entities/skill.entity';
-import { Task } from 'src/tasks/entities/task.entity';
-import { User } from 'src/users/entities/user.entity';
 export declare class Tasker {
     id: number;
+    user_id: number;
+    skill_id: number;
     work_area: string;
+    work_schedule: string;
+    description: string;
     experience: string;
-    completed_tasks: number;
-    rating_sum: number;
-    rating_count: number;
-    user: User;
-    skills: Skill[];
-    applied_tasks: Task[];
-    tasks: Task[];
+    expected_rate: number;
     created_at: Date;
     updated_at: Date;
-    setDates(): void;
-    updateDates(): void;
+    updateTimestamps(): void;
+    updateTimestamp(): void;
 }
