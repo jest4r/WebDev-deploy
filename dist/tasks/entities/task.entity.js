@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Task = void 0;
 const Status_enum_1 = require("../../enum/Status.enum");
+const review_entity_1 = require("../../reviews/entities/review.entity");
 const skill_entity_1 = require("../../skills/entities/skill.entity");
 const tasker_entity_1 = require("../../taskers/entities/tasker.entity");
 const user_entity_1 = require("../../users/entities/user.entity");
@@ -109,6 +110,10 @@ __decorate([
     (0, typeorm_1.JoinColumn)({ name: 'skill_id' }),
     __metadata("design:type", skill_entity_1.Skill)
 ], Task.prototype, "skill", void 0);
+__decorate([
+    (0, typeorm_1.OneToOne)(() => review_entity_1.Review, (review) => review.task),
+    __metadata("design:type", review_entity_1.Review)
+], Task.prototype, "review", void 0);
 exports.Task = Task = __decorate([
     (0, typeorm_1.Entity)()
 ], Task);

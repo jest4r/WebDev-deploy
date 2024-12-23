@@ -43,7 +43,7 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)({ type: 'float', default: 0 }),
     __metadata("design:type", Number)
-], Tasker.prototype, "avg_rating", void 0);
+], Tasker.prototype, "rating_sum", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'int', default: 0 }),
     __metadata("design:type", Number)

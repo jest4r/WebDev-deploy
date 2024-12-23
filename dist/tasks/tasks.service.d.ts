@@ -5,12 +5,14 @@ import { Task } from './entities/task.entity';
 import { UsersService } from 'src/users/users.service';
 import { TaskersService } from 'src/taskers/taskers.service';
 import { SkillsService } from 'src/skills/skills.service';
+import { TaskActionService } from './task-action.service';
 export declare class TasksService {
     private taskRepository;
     private readonly usersService;
     private readonly taskersService;
     private readonly skillService;
-    constructor(taskRepository: Repository<Task>, usersService: UsersService, taskersService: TaskersService, skillService: SkillsService);
+    private readonly taskActionService;
+    constructor(taskRepository: Repository<Task>, usersService: UsersService, taskersService: TaskersService, skillService: SkillsService, taskActionService: TaskActionService);
     create(user_id: number, createTaskDto: CreateTaskDto): Promise<Task>;
     findAllForAdmin(): Promise<Task[]>;
     findAllForUser(): Promise<Task[]>;

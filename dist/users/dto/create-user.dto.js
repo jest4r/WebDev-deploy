@@ -89,4 +89,11 @@ __decorate([
     (0, class_validator_1.IsEnum)(Role_enum_1.Role),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "role", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'https://example', required: false }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MaxLength)(200),
+    __metadata("design:type", String)
+], CreateUserDto.prototype, "avatar", void 0);
 //# sourceMappingURL=create-user.dto.js.map

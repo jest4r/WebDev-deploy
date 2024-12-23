@@ -3,9 +3,12 @@ import { LoginDto } from './dto/login.dto';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { Request } from 'express';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import EmailService from 'src/email/email.service';
+import { OtpDto } from './dto/otp.dto';
 export declare class AuthController {
     private readonly authService;
-    constructor(authService: AuthService);
+    private readonly emailService;
+    constructor(authService: AuthService, emailService: EmailService);
     register(registerDto: CreateUserDto): Promise<import("lodash").Omit<import("../users/entities/user.entity").User, "password">>;
     login(loginDto: LoginDto): Promise<{
         user: Omit<import("../users/entities/user.entity").User, "password">;
@@ -20,4 +23,5 @@ export declare class AuthController {
         access_token: string;
         refresh_token: string;
     }>;
+    otp(body: OtpDto): Promise<string>;
 }

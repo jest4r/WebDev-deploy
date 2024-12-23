@@ -10,6 +10,7 @@ export declare class UsersService {
     constructor(usersRepository: Repository<User>, profileRepository: Repository<Profile>);
     create(createUserDto: CreateUserDto): Promise<Omit<User, 'password'>>;
     findAll(): Promise<Omit<User, 'password'>[]>;
+    findAllAdmin(): Promise<Omit<User, 'password'>[]>;
     findById(id: number): Promise<Omit<User, 'password'>>;
     findByEmail(email: string): Promise<Omit<User, 'password'>>;
     findByEmailForAuth(email: string): Promise<User>;

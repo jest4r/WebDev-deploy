@@ -13,7 +13,7 @@ export declare class TaskersController {
         work_area: string;
         id: number;
         completed_tasks: number;
-        avg_rating: number;
+        rating_sum: number;
         rating_count: number;
         user: import("../users/entities/user.entity").User;
         skills: import("../skills/entities/skill.entity").Skill[];

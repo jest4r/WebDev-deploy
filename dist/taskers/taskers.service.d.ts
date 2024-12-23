@@ -13,12 +13,13 @@ export declare class TaskersService {
     create(user_id: number, createTaskerDto: CreateTaskerDto): Promise<Tasker>;
     findAll(): Promise<Tasker[]>;
     findOne(id: number): Promise<Tasker>;
+    getAllTaskerData(id: number): Promise<Tasker>;
     update(id: number, updateTaskerDto: UpdateTaskerDto): Promise<{
         experience: string;
         work_area: string;
         id: number;
         completed_tasks: number;
-        avg_rating: number;
+        rating_sum: number;
         rating_count: number;
         user: import("../users/entities/user.entity").User;
         skills: import("../skills/entities/skill.entity").Skill[];
@@ -27,5 +28,6 @@ export declare class TaskersService {
         created_at: Date;
         updated_at: Date;
     } & Tasker>;
+    updateCompletedTasks(id: number): Promise<import("typeorm").UpdateResult>;
     remove(id: number): Promise<import("typeorm").DeleteResult>;
 }

@@ -34,7 +34,9 @@ __decorate([
         required: false,
     }),
     (0, class_validator_1.IsArray)(),
-    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)({}, { each: true }),
+    (0, class_validator_1.ArrayMinSize)(1, { message: 'Array must have at least 1 element' }),
+    (0, class_validator_1.ArrayMaxSize)(100, { message: 'Array cannot have more than 100 elements' }),
     __metadata("design:type", Array)
 ], CreateTaskerDto.prototype, "skillIds", void 0);
 //# sourceMappingURL=create-tasker.dto.js.map

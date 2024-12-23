@@ -7,6 +7,7 @@ export declare class Profile {
     phone_number: string;
     gender: Gender;
     description: string;
+    avatar: string;
     birth_date: Date;
     create_at: Date;
     updated_at: Date;

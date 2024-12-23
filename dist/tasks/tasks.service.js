@@ -22,12 +22,14 @@ const console_1 = require("console");
 const taskers_service_1 = require("../taskers/taskers.service");
 const Status_enum_1 = require("../enum/Status.enum");
 const skills_service_1 = require("../skills/skills.service");
+const task_action_service_1 = require("./task-action.service");
 let TasksService = class TasksService {
-    constructor(taskRepository, usersService, taskersService, skillService) {
+    constructor(taskRepository, usersService, taskersService, skillService, taskActionService) {
         this.taskRepository = taskRepository;
         this.usersService = usersService;
         this.taskersService = taskersService;
         this.skillService = skillService;
+        this.taskActionService = taskActionService;
     }
     async create(user_id, createTaskDto) {
         const user = await this.usersService.findById(user_id);
@@ -37,17 +39,20 @@ let TasksService = class TasksService {
             user,
             skill,
         });
+        this.taskActionService.notifyTaskers(task);
         return await this.taskRepository.save(task);
     }
     findAllForAdmin() {
         return this.taskRepository.find({
-            relations: ['skill'],
+            relations: ['skill', 'user', 'tasker', 'taskers', 'review'],
+            order: { created_at: 'DESC' },
         });
     }
-    findAllForUser() {
-        return this.taskRepository.find({
+    async findAllForUser() {
+        return await this.taskRepository.find({
             where: { task_status: Status_enum_1.Status.POSTED },
             relations: ['skill'],
+            order: { created_at: 'DESC' },
         });
     }
     async findUserTasks(user_id) {
@@ -62,18 +67,24 @@ let TasksService = class TasksService {
                 'taskers',
                 'taskers.skills',
                 'tasker.skills',
+                'review',
             ],
+            order: { created_at: 'DESC' },
         });
     }
     async findTaskerTasks(tasker_id) {
         const tasker = await this.taskersService.findOne(tasker_id);
         return this.taskRepository.find({
             where: { tasker: { id: tasker.id } },
-            relations: ['user', 'skill'],
+            relations: ['user', 'skill', 'review'],
+            order: { created_at: 'DESC' },
         });
     }
     findOne(id) {
-        const task = this.taskRepository.findOne({ where: { id } });
+        const task = this.taskRepository.findOne({
+            where: { id },
+            relations: ['skill'],
+        });
         if (!task) {
             throw console_1.error;
         }
@@ -121,6 +132,7 @@ exports.TasksService = TasksService = __decorate([
     __metadata("design:paramtypes", [typeorm_2.Repository,
         users_service_1.UsersService,
         taskers_service_1.TaskersService,
-        skills_service_1.SkillsService])
+        skills_service_1.SkillsService,
+        task_action_service_1.TaskActionService])
 ], TasksService);
 //# sourceMappingURL=tasks.service.js.map

@@ -60,7 +60,10 @@ let TasksController = class TasksController {
         if (!req.user.tasker_id) {
             throw new common_1.ForbiddenException('You must be a tasker to accept a task');
         }
-        return this.taskActionService.accept(req.user.tasker_id, +id);
+        return this.taskActionService.pay(req.user.tasker_id, +id);
+    }
+    adminAccept(id) {
+        return this.taskActionService.accept(+id);
     }
     complete(req, id) {
         if (!req.user.tasker_id) {
@@ -156,13 +159,23 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiBearerAuth)('JWT-auth'),
     (0, swagger_1.ApiOperation)({ summary: 'Tasker accept a task' }),
-    (0, common_1.Patch)(':id/accept'),
+    (0, common_1.Patch)(':id/pay'),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", void 0)
 ], TasksController.prototype, "accept", null);
+__decorate([
+    (0, swagger_1.ApiBearerAuth)('JWT-auth'),
+    (0, swagger_1.ApiOperation)({ summary: 'ADMIN: Tasker accept a task' }),
+    (0, role_guard_decorator_1.RolesGuard)([Role_enum_1.Role.ADMIN]),
+    (0, common_1.Patch)(':id/accept'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], TasksController.prototype, "adminAccept", null);
 __decorate([
     (0, swagger_1.ApiBearerAuth)('JWT-auth'),
     (0, swagger_1.ApiOperation)({ summary: 'Tasker complete a task' }),

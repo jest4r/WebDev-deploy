@@ -9,4 +9,5 @@ export declare class CreateUserDto {
     gender: Gender;
     date_of_birth: string;
     role?: Role;
+    avatar?: string;
 }

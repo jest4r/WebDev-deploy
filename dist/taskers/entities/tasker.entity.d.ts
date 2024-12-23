@@ -6,7 +6,7 @@ export declare class Tasker {
     work_area: string;
     experience: string;
     completed_tasks: number;
-    avg_rating: number;
+    rating_sum: number;
     rating_count: number;
     user: User;
     skills: Skill[];

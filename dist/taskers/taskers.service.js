@@ -51,7 +51,7 @@ let TaskersService = class TaskersService {
     }
     findAll() {
         return this.taskerRepository.find({
-            relations: ['skills'],
+            relations: ['skills', 'user', 'user.profile'],
         });
     }
     findOne(id) {
@@ -68,6 +68,13 @@ let TaskersService = class TaskersService {
         catch (error) {
             throw error;
         }
+    }
+    async getAllTaskerData(id) {
+        const tasker = await this.taskerRepository.findOne({
+            where: { id },
+            relations: ['skills', 'user', 'user.profile'],
+        });
+        return tasker;
     }
     async update(id, updateTaskerDto) {
         const { skillIds, work_area, ...rest } = updateTaskerDto;
@@ -88,6 +95,9 @@ let TaskersService = class TaskersService {
             work_area: work_area_code,
             ...rest,
         });
+    }
+    updateCompletedTasks(id) {
+        return this.taskerRepository.update({ id }, { completed_tasks: () => 'completed_tasks + 1' });
     }
     remove(id) {
         return this.taskerRepository.delete({ id });

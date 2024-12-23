@@ -74,6 +74,18 @@ let UsersService = class UsersService {
             throw error;
         }
     }
+    async findAllAdmin() {
+        try {
+            const users = await this.usersRepository.find({
+                where: { role: Role_enum_1.Role.ADMIN },
+                relations: ['profile', 'tasker', 'tasker.skills'],
+            });
+            return users;
+        }
+        catch (error) {
+            throw error;
+        }
+    }
     async findById(id) {
         try {
             const user = await this.usersRepository.findOne({

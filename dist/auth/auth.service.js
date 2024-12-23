@@ -16,11 +16,13 @@ const users_service_1 = require("../users/users.service");
 const bcrypt = require("bcrypt");
 const config_1 = require("@nestjs/config");
 const lodash_1 = require("lodash");
+const email_service_1 = require("../email/email.service");
 let AuthService = class AuthService {
-    constructor(usersService, jwtService, configService) {
+    constructor(usersService, jwtService, configService, emailService) {
         this.usersService = usersService;
         this.jwtService = jwtService;
         this.configService = configService;
+        this.emailService = emailService;
     }
     async register(registerDto) {
         return this.usersService.create(registerDto);
@@ -90,12 +92,18 @@ let AuthService = class AuthService {
             throw new common_1.UnauthorizedException('Invalid token');
         }
     }
+    sendOTP(email) {
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        this.emailService.sendOTP(email, otp);
+        return otp;
+    }
 };
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [users_service_1.UsersService,
         jwt_1.JwtService,
-        config_1.ConfigService])
+        config_1.ConfigService,
+        email_service_1.default])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map

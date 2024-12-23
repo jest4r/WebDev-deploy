@@ -5,6 +5,7 @@ var Status;
 (function (Status) {
     Status["POSTED"] = "POSTED";
     Status["PENDING"] = "PENDING";
+    Status["PAYMENT_CONFIRM"] = "PAYMENT_CONFIRM";
     Status["IN_PROGRESS"] = "IN_PROGRESS";
     Status["COMPLETED"] = "COMPLETED";
     Status["CANCELLED"] = "CANCELLED";

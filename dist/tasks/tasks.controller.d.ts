@@ -14,6 +14,7 @@ export declare class TasksController {
     apply(req: AuthRequest, id: string): Promise<import("./entities/task.entity").Task>;
     choose(req: AuthRequest, task_id: string, tasker_id: string): Promise<import("./entities/task.entity").Task>;
     accept(req: AuthRequest, id: string): Promise<import("./entities/task.entity").Task>;
+    adminAccept(id: string): Promise<import("./entities/task.entity").Task>;
     complete(req: AuthRequest, id: string): Promise<import("./entities/task.entity").Task>;
     finish(req: AuthRequest, task_id: string): Promise<import("./entities/task.entity").Task>;
     reject(req: AuthRequest, id: string): Promise<import("./entities/task.entity").Task>;

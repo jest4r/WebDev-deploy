@@ -48,6 +48,10 @@ __decorate([
     __metadata("design:type", String)
 ], Profile.prototype, "description", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', nullable: true }),
+    __metadata("design:type", String)
+], Profile.prototype, "avatar", void 0);
+__decorate([
     (0, typeorm_1.Column)({ type: 'date', nullable: false }),
     __metadata("design:type", Date)
 ], Profile.prototype, "birth_date", void 0);
